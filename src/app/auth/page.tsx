@@ -1,12 +1,12 @@
  "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 
 type Mode = "signin" | "signup";
 
-export default function AuthPage() {
+function AuthPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const redirectTarget = searchParams.get("redirect") || "/dashboard";
@@ -317,3 +317,23 @@ export default function AuthPage() {
   );
 }
 
+export default function AuthPage() {
+  return (
+    <Suspense
+      fallback={
+        <main className="flex min-h-screen items-center justify-center bg-background px-4 text-text">
+          <div className="w-full max-w-md rounded-3xl border border-neutral-200 bg-white/80 p-8 shadow-[0_22px_65px_rgba(15,23,42,0.16)] backdrop-blur-xl">
+            <p className="text-xs uppercase tracking-[0.35em] text-neutral-500">
+              Treva Account
+            </p>
+            <h1 className="mt-3 font-serif text-2xl uppercase tracking-[0.25em]">
+              Loading...
+            </h1>
+          </div>
+        </main>
+      }
+    >
+      <AuthPageContent />
+    </Suspense>
+  );
+}

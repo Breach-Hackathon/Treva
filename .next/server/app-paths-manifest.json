@@ -1,1 +1,8 @@
-{}
+{
+  "/api/generate-trip/route": "app/api/generate-trip/route.js",
+  "/journal/page": "app/journal/page.js",
+  "/gallery/page": "app/gallery/page.js",
+  "/contact/page": "app/contact/page.js",
+  "/ai-planner/page": "app/ai-planner/page.js",
+  "/dashboard/page": "app/dashboard/page.js"
+}
