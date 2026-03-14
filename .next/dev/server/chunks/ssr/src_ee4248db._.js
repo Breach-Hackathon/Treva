@@ -1168,34 +1168,44 @@ const useImagePreloader = (path, totalFrames)=>{
     const [images, setImages] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])([]);
     const [progress, setProgress] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(0);
     (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useEffect"])(()=>{
-        const loadedImages = [];
-        let loadedCount = 0;
         let cancelled = false;
-        for(let i = 1; i <= totalFrames; i += 1){
-            const img = new Image();
-            const handleLoad = ()=>{
-                if (cancelled) return;
-                loadedCount += 1;
-                setProgress(Math.floor(loadedCount / totalFrames * 100));
-                loadedImages[i - 1] = img;
-                if (loadedCount === totalFrames) {
-                    // Fill any holes with the last available image or skip
-                    setImages(loadedImages.filter(Boolean));
-                }
-            };
-            const handleError = ()=>{
-                if (cancelled) return;
-                console.warn(`Failed to load image: ${img.src}`);
-                loadedCount += 1; // Still increment to not block progress
-                setProgress(Math.floor(loadedCount / totalFrames * 100));
-                if (loadedCount === totalFrames) {
-                    setImages(loadedImages.filter(Boolean));
-                }
-            };
-            img.onload = handleLoad;
-            img.onerror = handleError;
-            img.src = `${path}/${i.toString().padStart(3, "0")}.jpg`;
-        }
+        const loadedImages = new Array(totalFrames);
+        let loadedCount = 0;
+        const loadBatch = async (start, batchSize)=>{
+            const promises = [];
+            for(let i = start; i < start + batchSize && i <= totalFrames; i++){
+                promises.push(new Promise((resolve)=>{
+                    const img = new Image();
+                    const onload = ()=>{
+                        if (cancelled) return resolve();
+                        loadedImages[i - 1] = img;
+                        loadedCount++;
+                        resolve();
+                    };
+                    const onerror = ()=>{
+                        if (cancelled) return resolve();
+                        // Still resolve to keep moving forward even if an image fails
+                        loadedCount++;
+                        resolve();
+                    };
+                    img.onload = onload;
+                    img.onerror = onerror;
+                    img.src = `${path}/${i.toString().padStart(3, "0")}.jpg`;
+                }));
+            }
+            await Promise.all(promises);
+            if (cancelled) return;
+            setProgress(Math.floor(loadedCount / totalFrames * 100));
+            setImages([
+                ...loadedImages.filter(Boolean)
+            ]);
+            if (start + batchSize <= totalFrames) {
+                // Load next batch smoothly
+                requestAnimationFrame(()=>loadBatch(start + batchSize, batchSize));
+            }
+        };
+        // Load in batches of 15 to stay within browser concurrent limit rules
+        loadBatch(1, 15);
         return ()=>{
             cancelled = true;
         };
@@ -1225,7 +1235,7 @@ const travelData = [
         copy: "Arrive by private rotor, descend to a cantilevered villa, and dine in cliffside grottoes lit only by candlelight and the Tyrrhenian Sea.",
         meta: "Signature Itinerary",
         image: "https://images.unsplash.com/photo-1534113414509-0eec2bfb493f?w=800&q=80",
-        price: "From $14,500",
+        price: "From ₹12,00,000",
         duration: "5 nights"
     },
     {
@@ -1236,7 +1246,7 @@ const travelData = [
         copy: "Tatami-mat suites, private onsen rituals, and after-hours access to lantern-lit districts reserved quietly for Treva guests.",
         meta: "Cultural Immersion",
         image: "https://images.unsplash.com/photo-1528360983277-13d401cdc186?w=800&q=80",
-        price: "From $18,200",
+        price: "From ₹15,00,000",
         duration: "7 nights"
     },
     {
@@ -1247,7 +1257,7 @@ const travelData = [
         copy: "Glass-domed lodges beneath the southern sky, glacier landings, and chef-driven fire dinners far beyond the last trailhead.",
         meta: "Expedition Luxury",
         image: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=800&q=80",
-        price: "From $22,000",
+        price: "From ₹18,00,000",
         duration: "6 nights"
     },
     {
@@ -1258,7 +1268,7 @@ const travelData = [
         copy: "An entire island, yours alone. Overwater villas, a private dive master, and sunsets that redefine the colour gold.",
         meta: "Island Exclusive",
         image: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&q=80",
-        price: "From $32,000",
+        price: "From ₹26,00,000",
         duration: "8 nights"
     },
     {
@@ -1269,7 +1279,7 @@ const travelData = [
         copy: "From the ancient medinas of Fez to the silence of the Sahara, a route through one of the world's most sensory-rich countries.",
         meta: "Cultural Immersion",
         image: "https://images.unsplash.com/photo-1489749798305-4fea3ae63d43?w=800&q=80",
-        price: "From $11,800",
+        price: "From ₹9,50,000",
         duration: "10 nights"
     },
     {
@@ -1280,7 +1290,7 @@ const travelData = [
         copy: "Heli-skiing pristine powder by day, Michelin-star fondue by night, all from a chalet that makes Narnia look modest.",
         meta: "Winter Luxury",
         image: "https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?w=800&q=80",
-        price: "From $19,500",
+        price: "From ₹16,00,000",
         duration: "5 nights"
     },
     {
@@ -1291,7 +1301,7 @@ const travelData = [
         copy: "Glass-floor villas above a lagoon so clear it feels like floating on light. Private pearl farm visits and Polynesian fire ceremonies.",
         meta: "Honeymoon",
         image: "https://images.unsplash.com/photo-1552733407-5d5c46c3bb3b?w=800&q=80",
-        price: "From $26,000",
+        price: "From ₹21,00,000",
         duration: "7 nights"
     },
     {
@@ -1302,7 +1312,7 @@ const travelData = [
         copy: "Glass igloos, husky safaris, and the Northern Lights dancing above the Arctic Circle in colours no screen can replicate.",
         meta: "Expedition",
         image: "https://images.unsplash.com/photo-1531366936337-7c912a4589a7?w=800&q=80",
-        price: "From $9,800",
+        price: "From ₹8,00,000",
         duration: "4 nights"
     }
 ];

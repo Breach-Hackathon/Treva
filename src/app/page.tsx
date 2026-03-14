@@ -9,6 +9,7 @@ import PackageCard from "@/components/ui/PackageCard";
 import AiTripPlanner from "@/components/ui/AiTripPlanner";
 import { useImagePreloader } from "@/hooks/useImagePreloader";
 import { travelData } from "@/data/travelData";
+import { supabase } from "@/lib/supabase";
 
 const HERO_FRAMES = 264;
 
@@ -159,10 +160,21 @@ export default function HomePage() {
             </p>
           </div>
           <form 
-            onSubmit={(e) => {
+            onSubmit={async (e) => {
               e.preventDefault();
+              const formData = new FormData(e.currentTarget);
+              const name = formData.get("name");
+              const email = formData.get("email");
+              const dates = formData.get("dates");
+              const notes = formData.get("notes");
+              
+              if (process.env.NEXT_PUBLIC_SUPABASE_URL) {
+                await supabase.from("contact_requests").insert([{ name, email, dates, notes }]);
+              }
+              
               setContactSubmitted(true);
               setTimeout(() => setContactSubmitted(false), 4000);
+              e.currentTarget.reset();
             }}
             className="space-y-4 rounded-3xl bg-white p-6 shadow-[0_20px_60px_rgba(15,23,42,0.12)] md:p-8"
           >
@@ -173,6 +185,7 @@ export default function HomePage() {
                 </label>
                 <input
                   required
+                  name="name"
                   className="w-full border-b border-neutral-200 bg-transparent pb-2 text-sm outline-none focus:border-accent"
                   placeholder="Your full name"
                 />
@@ -183,6 +196,7 @@ export default function HomePage() {
                 </label>
                 <input
                   required
+                  name="email"
                   className="w-full border-b border-neutral-200 bg-transparent pb-2 text-sm outline-none focus:border-accent"
                   placeholder="you@example.com"
                   type="email"
@@ -194,6 +208,7 @@ export default function HomePage() {
                 Ideal dates & destinations
               </label>
               <input
+                name="dates"
                 className="w-full border-b border-neutral-200 bg-transparent pb-2 text-sm outline-none focus:border-accent"
                 placeholder="For example: late June, Amalfi + Capri"
               />
@@ -203,6 +218,7 @@ export default function HomePage() {
                 Notes
               </label>
               <textarea
+                name="notes"
                 className="min-h-[80px] w-full resize-none border-b border-neutral-200 bg-transparent pb-2 text-sm outline-none focus:border-accent"
                 placeholder="Tell us how you like to arrive, unwind, and explore."
               />

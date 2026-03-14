@@ -5,38 +5,53 @@ export const useImagePreloader = (path: string, totalFrames: number) => {
   const [progress, setProgress] = useState(0);
 
   useEffect(() => {
-    const loadedImages: HTMLImageElement[] = [];
-    let loadedCount = 0;
     let cancelled = false;
+    const loadedImages: HTMLImageElement[] = new Array(totalFrames);
+    let loadedCount = 0;
 
-    for (let i = 1; i <= totalFrames; i += 1) {
-      const img = new Image();
+    const loadBatch = async (start: number, batchSize: number) => {
+      const promises = [];
+      for (let i = start; i < start + batchSize && i <= totalFrames; i++) {
+        promises.push(
+          new Promise<void>((resolve) => {
+            const img = new Image();
+            
+            const onload = () => {
+              if (cancelled) return resolve();
+              loadedImages[i - 1] = img;
+              loadedCount++;
+              resolve();
+            };
+
+            const onerror = () => {
+              if (cancelled) return resolve();
+              // Still resolve to keep moving forward even if an image fails
+              loadedCount++;
+              resolve();
+            };
+
+            img.onload = onload;
+            img.onerror = onerror;
+            img.src = `${path}/${i.toString().padStart(3, "0")}.jpg`;
+          })
+        );
+      }
+
+      await Promise.all(promises);
       
-      const handleLoad = () => {
-        if (cancelled) return;
-        loadedCount += 1;
-        setProgress(Math.floor((loadedCount / totalFrames) * 100));
-        loadedImages[i - 1] = img;
-        if (loadedCount === totalFrames) {
-          // Fill any holes with the last available image or skip
-          setImages(loadedImages.filter(Boolean));
-        }
-      };
+      if (cancelled) return;
+      
+      setProgress(Math.floor((loadedCount / totalFrames) * 100));
+      setImages([...loadedImages.filter(Boolean)]);
 
-      const handleError = () => {
-        if (cancelled) return;
-        console.warn(`Failed to load image: ${img.src}`);
-        loadedCount += 1; // Still increment to not block progress
-        setProgress(Math.floor((loadedCount / totalFrames) * 100));
-        if (loadedCount === totalFrames) {
-          setImages(loadedImages.filter(Boolean));
-        }
-      };
+      if (start + batchSize <= totalFrames) {
+        // Load next batch smoothly
+        requestAnimationFrame(() => loadBatch(start + batchSize, batchSize));
+      }
+    };
 
-      img.onload = handleLoad;
-      img.onerror = handleError;
-      img.src = `${path}/${i.toString().padStart(3, "0")}.jpg`;
-    }
+    // Load in batches of 15 to stay within browser concurrent limit rules
+    loadBatch(1, 15);
 
     return () => {
       cancelled = true;

@@ -98,7 +98,7 @@ export default function AiTripPlanner() {
   return (
     <section
       id="ai-planner"
-      className="relative overflow-hidden bg-[#0c0c0c] py-24 text-white md:py-32"
+      className="relative overflow-hidden bg-surface py-24 text-text md:py-32"
     >
       {/* Ambient glow effects */}
       <div className="pointer-events-none absolute left-1/2 top-0 h-[600px] w-[600px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#1fb4b4]/10 blur-[120px]" />
@@ -119,7 +119,7 @@ export default function AiTripPlanner() {
           <h2 className="font-serif text-3xl uppercase tracking-[0.25em] md:text-5xl">
             Dream it. We&apos;ll design&nbsp;it.
           </h2>
-          <p className="mx-auto max-w-lg text-sm leading-relaxed text-neutral-400">
+          <p className="mx-auto max-w-lg text-sm leading-relaxed text-neutral-600">
             Describe your perfect trip in a single sentence and our AI Travel
             Architect will craft a bespoke itinerary in seconds.
           </p>
@@ -133,7 +133,7 @@ export default function AiTripPlanner() {
           transition={{ duration: 0.6, delay: 0.2 }}
           className="mx-auto max-w-2xl"
         >
-          <div className="group relative rounded-2xl border border-white/10 bg-white/5 p-1 backdrop-blur-md transition-all duration-500 focus-within:border-[#1fb4b4]/40 focus-within:shadow-[0_0_40px_rgba(31,180,180,0.12)]">
+          <div className="group relative rounded-2xl border border-neutral-200 bg-white p-1 backdrop-blur-md transition-all duration-500 focus-within:border-[#1fb4b4]/40 focus-within:shadow-[0_0_40px_rgba(31,180,180,0.12)]">
             <div className="flex items-center gap-2">
               {/* Sparkle icon */}
               <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-[#1fb4b4]/10 text-[#1fb4b4]">
@@ -159,7 +159,7 @@ export default function AiTripPlanner() {
                 onKeyDown={(e) => e.key === "Enter" && generate()}
                 placeholder="A romantic week in Santorini with wine tasting…"
                 disabled={loading}
-                className="min-w-0 flex-1 bg-transparent py-4 text-sm text-white outline-none placeholder:text-neutral-500"
+                className="min-w-0 flex-1 bg-transparent py-4 text-sm text-text outline-none placeholder:text-neutral-400"
               />
 
               <button
@@ -189,7 +189,7 @@ export default function AiTripPlanner() {
                   generate(insp);
                 }}
                 disabled={loading}
-                className="rounded-full border border-white/10 bg-white/5 px-4 py-1.5 text-[0.65rem] uppercase tracking-[0.15em] text-neutral-400 transition-all hover:border-[#1fb4b4]/30 hover:text-[#1fb4b4] disabled:opacity-40"
+                className="rounded-full border border-neutral-200 bg-white px-4 py-1.5 text-[0.65rem] uppercase tracking-[0.15em] text-neutral-500 transition-all hover:border-[#1fb4b4]/30 hover:text-[#1fb4b4] disabled:opacity-40"
               >
                 {insp}
               </button>
@@ -220,7 +220,7 @@ export default function AiTripPlanner() {
               exit={{ opacity: 0, y: -10 }}
               className="mx-auto mt-16 max-w-4xl"
             >
-              <div className="space-y-6 rounded-3xl border border-white/10 bg-white/[0.03] p-8 backdrop-blur-sm">
+              <div className="space-y-6 rounded-3xl border border-neutral-200 bg-white p-8 shadow-sm">
                 <div className="flex items-center gap-3">
                   <div className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-[#1fb4b4]/30 border-t-[#1fb4b4]" />
                   <p className="text-xs uppercase tracking-[0.3em] text-[#1fb4b4]">
@@ -231,11 +231,11 @@ export default function AiTripPlanner() {
                 {[1, 2, 3].map((i) => (
                   <div key={i} className="space-y-3">
                     <div
-                      className="h-4 animate-pulse rounded bg-white/10"
+                      className="h-4 animate-pulse rounded bg-neutral-200"
                       style={{ width: `${70 - i * 12}%` }}
                     />
-                    <div className="h-3 w-full animate-pulse rounded bg-white/5" />
-                    <div className="h-3 w-4/5 animate-pulse rounded bg-white/5" />
+                    <div className="h-3 w-full animate-pulse rounded bg-neutral-100" />
+                    <div className="h-3 w-4/5 animate-pulse rounded bg-neutral-100" />
                   </div>
                 ))}
               </div>
@@ -255,7 +255,7 @@ export default function AiTripPlanner() {
               className="mx-auto mt-16 max-w-5xl"
             >
               {/* Hero card */}
-              <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-br from-white/[0.06] to-white/[0.02] p-8 backdrop-blur-md md:p-12">
+              <div className="relative overflow-hidden rounded-3xl border border-neutral-200 bg-white p-8 shadow-sm md:p-12">
                 <div className="pointer-events-none absolute -right-16 -top-16 h-48 w-48 rounded-full bg-[#1fb4b4]/10 blur-[80px]" />
                 <div className="pointer-events-none absolute -bottom-12 -left-12 h-36 w-36 rounded-full bg-[#D4AF37]/10 blur-[60px]" />
 
@@ -268,7 +268,7 @@ export default function AiTripPlanner() {
                       <h3 className="font-serif text-2xl uppercase tracking-[0.2em] md:text-4xl">
                         {trip.tripName}
                       </h3>
-                      <p className="text-sm italic text-neutral-400">
+                      <p className="text-sm italic text-neutral-600">
                         &ldquo;{trip.tagline}&rdquo;
                       </p>
                     </div>
@@ -280,7 +280,7 @@ export default function AiTripPlanner() {
                       ].map((tag) => (
                         <span
                           key={tag}
-                          className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[0.6rem] uppercase tracking-[0.2em] text-neutral-300"
+                          className="rounded-full border border-neutral-200 bg-neutral-50 px-3 py-1 text-[0.6rem] uppercase tracking-[0.2em] text-neutral-600"
                         >
                           {tag}
                         </span>
@@ -288,7 +288,7 @@ export default function AiTripPlanner() {
                     </div>
                   </div>
 
-                  <p className="max-w-2xl text-sm leading-relaxed text-neutral-300">
+                  <p className="max-w-2xl text-sm leading-relaxed text-neutral-700">
                     {trip.heroDescription}
                   </p>
 
@@ -313,7 +313,7 @@ export default function AiTripPlanner() {
                       className={`rounded-full border px-4 py-2 text-[0.65rem] uppercase tracking-[0.2em] transition-all ${
                         activeDay === i
                           ? "border-[#1fb4b4] bg-[#1fb4b4]/15 text-[#1fb4b4]"
-                          : "border-white/10 text-neutral-500 hover:border-white/20 hover:text-neutral-300"
+                          : "border-neutral-200 text-neutral-500 hover:border-neutral-300 hover:text-neutral-700"
                       }`}
                     >
                       Day {day.day}
@@ -330,7 +330,7 @@ export default function AiTripPlanner() {
                       animate={{ opacity: 1, x: 0 }}
                       exit={{ opacity: 0, x: -20 }}
                       transition={{ duration: 0.3 }}
-                      className="rounded-2xl border border-white/10 bg-white/[0.03] p-6 md:p-8"
+                      className="rounded-2xl border border-neutral-200 bg-white p-6 shadow-sm md:p-8"
                     >
                       <h4 className="mb-6 font-serif text-xl uppercase tracking-[0.15em]">
                         {trip.itinerary[activeDay]!.title}
@@ -360,14 +360,14 @@ export default function AiTripPlanner() {
                             <p className="text-[0.65rem] uppercase tracking-[0.3em] text-neutral-500">
                               {slot.icon} {slot.label}
                             </p>
-                            <p className="text-sm leading-relaxed text-neutral-300">
+                            <p className="text-sm leading-relaxed text-neutral-700">
                               {slot.text}
                             </p>
                           </div>
                         ))}
                       </div>
 
-                      <div className="mt-6 flex items-center gap-2 border-t border-white/5 pt-4">
+                      <div className="mt-6 flex items-center gap-2 border-t border-neutral-100 pt-4">
                         <svg
                           width="14"
                           height="14"
@@ -469,7 +469,7 @@ function InfoCard({
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       transition={{ duration: 0.5 }}
-      className="rounded-2xl border border-white/10 bg-white/[0.03] p-5 backdrop-blur-sm"
+      className="rounded-2xl border border-neutral-200 bg-white p-5 shadow-sm"
     >
       <p
         className="mb-3 text-[0.65rem] uppercase tracking-[0.3em]"
@@ -481,7 +481,7 @@ function InfoCard({
         {items.map((item, i) => (
           <li
             key={i}
-            className="flex items-start gap-2 text-[0.8rem] leading-relaxed text-neutral-400"
+            className="flex items-start gap-2 text-[0.8rem] leading-relaxed text-neutral-600"
           >
             <span
               className="mt-1.5 h-1 w-1 shrink-0 rounded-full"

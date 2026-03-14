@@ -71,7 +71,7 @@ function AiTripPlanner() {
     };
     return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("section", {
         id: "ai-planner",
-        className: "relative overflow-hidden bg-[#0c0c0c] py-24 text-white md:py-32",
+        className: "relative overflow-hidden bg-surface py-24 text-text md:py-32",
         children: [
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                 className: "pointer-events-none absolute left-1/2 top-0 h-[600px] w-[600px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#1fb4b4]/10 blur-[120px]"
@@ -126,7 +126,7 @@ function AiTripPlanner() {
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
-                                className: "mx-auto max-w-lg text-sm leading-relaxed text-neutral-400",
+                                className: "mx-auto max-w-lg text-sm leading-relaxed text-neutral-600",
                                 children: "Describe your perfect trip in a single sentence and our AI Travel Architect will craft a bespoke itinerary in seconds."
                             }, void 0, false, {
                                 fileName: "[project]/src/components/ui/AiTripPlanner.tsx",
@@ -158,7 +158,7 @@ function AiTripPlanner() {
                         className: "mx-auto max-w-2xl",
                         children: [
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                className: "group relative rounded-2xl border border-white/10 bg-white/5 p-1 backdrop-blur-md transition-all duration-500 focus-within:border-[#1fb4b4]/40 focus-within:shadow-[0_0_40px_rgba(31,180,180,0.12)]",
+                                className: "group relative rounded-2xl border border-neutral-200 bg-white p-1 backdrop-blur-md transition-all duration-500 focus-within:border-[#1fb4b4]/40 focus-within:shadow-[0_0_40px_rgba(31,180,180,0.12)]",
                                 children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                     className: "flex items-center gap-2",
                                     children: [
@@ -196,7 +196,7 @@ function AiTripPlanner() {
                                             onKeyDown: (e)=>e.key === "Enter" && generate(),
                                             placeholder: "A romantic week in Santorini with wine tasting…",
                                             disabled: loading,
-                                            className: "min-w-0 flex-1 bg-transparent py-4 text-sm text-white outline-none placeholder:text-neutral-500"
+                                            className: "min-w-0 flex-1 bg-transparent py-4 text-sm text-text outline-none placeholder:text-neutral-400"
                                         }, void 0, false, {
                                             fileName: "[project]/src/components/ui/AiTripPlanner.tsx",
                                             lineNumber: 156,
@@ -242,7 +242,7 @@ function AiTripPlanner() {
                                             generate(insp);
                                         },
                                         disabled: loading,
-                                        className: "rounded-full border border-white/10 bg-white/5 px-4 py-1.5 text-[0.65rem] uppercase tracking-[0.15em] text-neutral-400 transition-all hover:border-[#1fb4b4]/30 hover:text-[#1fb4b4] disabled:opacity-40",
+                                        className: "rounded-full border border-neutral-200 bg-white px-4 py-1.5 text-[0.65rem] uppercase tracking-[0.15em] text-neutral-500 transition-all hover:border-[#1fb4b4]/30 hover:text-[#1fb4b4] disabled:opacity-40",
                                         children: insp
                                     }, insp, false, {
                                         fileName: "[project]/src/components/ui/AiTripPlanner.tsx",
@@ -301,7 +301,7 @@ function AiTripPlanner() {
                             },
                             className: "mx-auto mt-16 max-w-4xl",
                             children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                className: "space-y-6 rounded-3xl border border-white/10 bg-white/[0.03] p-8 backdrop-blur-sm",
+                                className: "space-y-6 rounded-3xl border border-neutral-200 bg-white p-8 shadow-sm",
                                 children: [
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                         className: "flex items-center gap-3",
@@ -335,7 +335,7 @@ function AiTripPlanner() {
                                             className: "space-y-3",
                                             children: [
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                                    className: "h-4 animate-pulse rounded bg-white/10",
+                                                    className: "h-4 animate-pulse rounded bg-neutral-200",
                                                     style: {
                                                         width: `${70 - i * 12}%`
                                                     }
@@ -345,14 +345,14 @@ function AiTripPlanner() {
                                                     columnNumber: 21
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                                    className: "h-3 w-full animate-pulse rounded bg-white/5"
+                                                    className: "h-3 w-full animate-pulse rounded bg-neutral-100"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/ui/AiTripPlanner.tsx",
                                                     lineNumber: 237,
                                                     columnNumber: 21
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                                    className: "h-3 w-4/5 animate-pulse rounded bg-white/5"
+                                                    className: "h-3 w-4/5 animate-pulse rounded bg-neutral-100"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/ui/AiTripPlanner.tsx",
                                                     lineNumber: 238,
@@ -402,7 +402,7 @@ function AiTripPlanner() {
                             className: "mx-auto mt-16 max-w-5xl",
                             children: [
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                    className: "relative overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-br from-white/[0.06] to-white/[0.02] p-8 backdrop-blur-md md:p-12",
+                                    className: "relative overflow-hidden rounded-3xl border border-neutral-200 bg-white p-8 shadow-sm md:p-12",
                                     children: [
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                             className: "pointer-events-none absolute -right-16 -top-16 h-48 w-48 rounded-full bg-[#1fb4b4]/10 blur-[80px]"
@@ -444,7 +444,7 @@ function AiTripPlanner() {
                                                                     columnNumber: 23
                                                                 }, this),
                                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
-                                                                    className: "text-sm italic text-neutral-400",
+                                                                    className: "text-sm italic text-neutral-600",
                                                                     children: [
                                                                         "“",
                                                                         trip.tagline,
@@ -468,7 +468,7 @@ function AiTripPlanner() {
                                                                 trip.duration,
                                                                 trip.bestSeason
                                                             ].map((tag)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                                                    className: "rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[0.6rem] uppercase tracking-[0.2em] text-neutral-300",
+                                                                    className: "rounded-full border border-neutral-200 bg-neutral-50 px-3 py-1 text-[0.6rem] uppercase tracking-[0.2em] text-neutral-600",
                                                                     children: tag
                                                                 }, tag, false, {
                                                                     fileName: "[project]/src/components/ui/AiTripPlanner.tsx",
@@ -487,7 +487,7 @@ function AiTripPlanner() {
                                                     columnNumber: 19
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
-                                                    className: "max-w-2xl text-sm leading-relaxed text-neutral-300",
+                                                    className: "max-w-2xl text-sm leading-relaxed text-neutral-700",
                                                     children: trip.heroDescription
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/ui/AiTripPlanner.tsx",
@@ -532,7 +532,7 @@ function AiTripPlanner() {
                                             className: "flex flex-wrap gap-2",
                                             children: trip.itinerary.map((day, i)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
                                                     onClick: ()=>setActiveDay(i),
-                                                    className: `rounded-full border px-4 py-2 text-[0.65rem] uppercase tracking-[0.2em] transition-all ${activeDay === i ? "border-[#1fb4b4] bg-[#1fb4b4]/15 text-[#1fb4b4]" : "border-white/10 text-neutral-500 hover:border-white/20 hover:text-neutral-300"}`,
+                                                    className: `rounded-full border px-4 py-2 text-[0.65rem] uppercase tracking-[0.2em] transition-all ${activeDay === i ? "border-[#1fb4b4] bg-[#1fb4b4]/15 text-[#1fb4b4]" : "border-neutral-200 text-neutral-500 hover:border-neutral-300 hover:text-neutral-700"}`,
                                                     children: [
                                                         "Day ",
                                                         day.day
@@ -565,7 +565,7 @@ function AiTripPlanner() {
                                                 transition: {
                                                     duration: 0.3
                                                 },
-                                                className: "rounded-2xl border border-white/10 bg-white/[0.03] p-6 md:p-8",
+                                                className: "rounded-2xl border border-neutral-200 bg-white p-6 shadow-sm md:p-8",
                                                 children: [
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("h4", {
                                                         className: "mb-6 font-serif text-xl uppercase tracking-[0.15em]",
@@ -609,7 +609,7 @@ function AiTripPlanner() {
                                                                         columnNumber: 29
                                                                     }, this),
                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
-                                                                        className: "text-sm leading-relaxed text-neutral-300",
+                                                                        className: "text-sm leading-relaxed text-neutral-700",
                                                                         children: slot.text
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/src/components/ui/AiTripPlanner.tsx",
@@ -628,7 +628,7 @@ function AiTripPlanner() {
                                                         columnNumber: 23
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                                        className: "mt-6 flex items-center gap-2 border-t border-white/5 pt-4",
+                                                        className: "mt-6 flex items-center gap-2 border-t border-neutral-100 pt-4",
                                                         children: [
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("svg", {
                                                                 width: "14",
@@ -812,7 +812,7 @@ _c = AiTripPlanner;
         transition: {
             duration: 0.5
         },
-        className: "rounded-2xl border border-white/10 bg-white/[0.03] p-5 backdrop-blur-sm",
+        className: "rounded-2xl border border-neutral-200 bg-white p-5 shadow-sm",
         children: [
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
                 className: "mb-3 text-[0.65rem] uppercase tracking-[0.3em]",
@@ -832,7 +832,7 @@ _c = AiTripPlanner;
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("ul", {
                 className: "space-y-2",
                 children: items.map((item, i)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("li", {
-                        className: "flex items-start gap-2 text-[0.8rem] leading-relaxed text-neutral-400",
+                        className: "flex items-start gap-2 text-[0.8rem] leading-relaxed text-neutral-600",
                         children: [
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                 className: "mt-1.5 h-1 w-1 shrink-0 rounded-full",

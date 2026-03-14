@@ -2,14 +2,36 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
+import { supabase } from "@/lib/supabase";
 
 export default function ContactPage() {
   const [submitted, setSubmitted] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    
+    const formData = new FormData(e.currentTarget);
+    const name = formData.get("name");
+    const email = formData.get("email");
+    const phone = formData.get("phone");
+    const party = formData.get("party");
+    const dates = formData.get("dates");
+    const experience = formData.get("experience");
+    
+    if (process.env.NEXT_PUBLIC_SUPABASE_URL) {
+      await supabase.from("contact_requests").insert([{
+        name,
+        email,
+        phone,
+        party,
+        dates,
+        notes: experience,
+      }]);
+    }
+
     setSubmitted(true);
     setTimeout(() => setSubmitted(false), 4000);
+    e.currentTarget.reset();
   };
 
   return (
@@ -138,6 +160,7 @@ export default function ContactPage() {
                 </label>
                 <input
                   required
+                  name="name"
                   className="w-full border-b border-neutral-200 bg-transparent pb-2 text-sm outline-none transition-colors focus:border-accent"
                   placeholder="Your full name"
                 />
@@ -149,6 +172,7 @@ export default function ContactPage() {
                 <input
                   required
                   type="email"
+                  name="email"
                   className="w-full border-b border-neutral-200 bg-transparent pb-2 text-sm outline-none transition-colors focus:border-accent"
                   placeholder="you@example.com"
                 />
@@ -161,6 +185,7 @@ export default function ContactPage() {
                   Phone
                 </label>
                 <input
+                  name="phone"
                   className="w-full border-b border-neutral-200 bg-transparent pb-2 text-sm outline-none transition-colors focus:border-accent"
                   placeholder="+1 (555) 000-0000"
                 />
@@ -170,6 +195,7 @@ export default function ContactPage() {
                   Travel party
                 </label>
                 <input
+                  name="party"
                   className="w-full border-b border-neutral-200 bg-transparent pb-2 text-sm outline-none transition-colors focus:border-accent"
                   placeholder="e.g. 2 adults, 1 child"
                 />
@@ -181,6 +207,7 @@ export default function ContactPage() {
                 Ideal dates &amp; destinations
               </label>
               <input
+                name="dates"
                 className="w-full border-b border-neutral-200 bg-transparent pb-2 text-sm outline-none transition-colors focus:border-accent"
                 placeholder="For example: late June, Amalfi + Capri"
               />
@@ -191,6 +218,7 @@ export default function ContactPage() {
                 How do you like to travel?
               </label>
               <textarea
+                name="experience"
                 className="min-h-[100px] w-full resize-none border-b border-neutral-200 bg-transparent pb-2 text-sm outline-none transition-colors focus:border-accent"
                 placeholder="Tell us how you like to arrive, unwind, and explore. Any must-haves, dietary needs, or special occasions?"
               />

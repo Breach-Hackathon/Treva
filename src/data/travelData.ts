@@ -19,7 +19,7 @@ export const travelData: Destination[] = [
     copy: "Arrive by private rotor, descend to a cantilevered villa, and dine in cliffside grottoes lit only by candlelight and the Tyrrhenian Sea.",
     meta: "Signature Itinerary",
     image: "https://images.unsplash.com/photo-1534113414509-0eec2bfb493f?w=800&q=80",
-    price: "From $14,500",
+    price: "From ₹12,00,000",
     duration: "5 nights",
   },
   {
@@ -30,7 +30,7 @@ export const travelData: Destination[] = [
     copy: "Tatami-mat suites, private onsen rituals, and after-hours access to lantern-lit districts reserved quietly for Treva guests.",
     meta: "Cultural Immersion",
     image: "https://images.unsplash.com/photo-1528360983277-13d401cdc186?w=800&q=80",
-    price: "From $18,200",
+    price: "From ₹15,00,000",
     duration: "7 nights",
   },
   {
@@ -41,7 +41,7 @@ export const travelData: Destination[] = [
     copy: "Glass-domed lodges beneath the southern sky, glacier landings, and chef-driven fire dinners far beyond the last trailhead.",
     meta: "Expedition Luxury",
     image: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=800&q=80",
-    price: "From $22,000",
+    price: "From ₹18,00,000",
     duration: "6 nights",
   },
   {
@@ -52,7 +52,7 @@ export const travelData: Destination[] = [
     copy: "An entire island, yours alone. Overwater villas, a private dive master, and sunsets that redefine the colour gold.",
     meta: "Island Exclusive",
     image: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&q=80",
-    price: "From $32,000",
+    price: "From ₹26,00,000",
     duration: "8 nights",
   },
   {
@@ -63,7 +63,7 @@ export const travelData: Destination[] = [
     copy: "From the ancient medinas of Fez to the silence of the Sahara, a route through one of the world's most sensory-rich countries.",
     meta: "Cultural Immersion",
     image: "https://images.unsplash.com/photo-1489749798305-4fea3ae63d43?w=800&q=80",
-    price: "From $11,800",
+    price: "From ₹9,50,000",
     duration: "10 nights",
   },
   {
@@ -74,7 +74,7 @@ export const travelData: Destination[] = [
     copy: "Heli-skiing pristine powder by day, Michelin-star fondue by night, all from a chalet that makes Narnia look modest.",
     meta: "Winter Luxury",
     image: "https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?w=800&q=80",
-    price: "From $19,500",
+    price: "From ₹16,00,000",
     duration: "5 nights",
   },
   {
@@ -85,7 +85,7 @@ export const travelData: Destination[] = [
     copy: "Glass-floor villas above a lagoon so clear it feels like floating on light. Private pearl farm visits and Polynesian fire ceremonies.",
     meta: "Honeymoon",
     image: "https://images.unsplash.com/photo-1552733407-5d5c46c3bb3b?w=800&q=80",
-    price: "From $26,000",
+    price: "From ₹21,00,000",
     duration: "7 nights",
   },
   {
@@ -96,7 +96,7 @@ export const travelData: Destination[] = [
     copy: "Glass igloos, husky safaris, and the Northern Lights dancing above the Arctic Circle in colours no screen can replicate.",
     meta: "Expedition",
     image: "https://images.unsplash.com/photo-1531366936337-7c912a4589a7?w=800&q=80",
-    price: "From $9,800",
+    price: "From ₹8,00,000",
     duration: "4 nights",
   },
 ];
