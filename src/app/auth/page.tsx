@@ -24,7 +24,14 @@ export default function AuthPage() {
 
     supabase.auth
       .getUser()
-      .then(({ data, error }) => {
+      .then(
+        ({
+          data,
+          error,
+        }: {
+          data: { user: { email?: string | null } | null };
+          error: Error | null;
+        }) => {
         if (!mounted) return;
         if (error) {
           console.error(error);
