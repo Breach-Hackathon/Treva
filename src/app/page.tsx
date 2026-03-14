@@ -1,7 +1,8 @@
 'use client';
 
-import { useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import HeroSequence from "@/components/canvas/HeroSequence";
 import Button from "@/components/ui/Button";
@@ -16,8 +17,25 @@ const HERO_FRAMES = 264;
 export default function HomePage() {
   const hero = useImagePreloader("/Treva Hero Section", HERO_FRAMES);
   const [contactSubmitted, setContactSubmitted] = useState(false);
+  const router = useRouter();
 
   const isLoaded = hero.images.length > 0;
+
+  useEffect(() => {
+    let mounted = true;
+    supabase.auth
+      .getUser()
+      .then(({ data }) => {
+        if (!mounted) return;
+        if (data.user) {
+          router.replace("/dashboard");
+        }
+      })
+      .catch(() => {});
+    return () => {
+      mounted = false;
+    };
+  }, [router]);
 
   const destinations = travelData.slice(0, 3);
 

@@ -1,7 +1,9 @@
-"use client";
+ "use client";
 
-import { useState, useRef, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+ import { useState, useRef, useEffect } from "react";
+ import { useRouter } from "next/navigation";
+ import { motion, AnimatePresence } from "framer-motion";
+ import { supabase } from "@/lib/supabase";
 
 /* ------------------------------------------------------------------ */
 /*  Types                                                              */
@@ -50,6 +52,10 @@ const INSPIRATIONS = [
 /* ------------------------------------------------------------------ */
 /*  Component                                                          */
 /* ------------------------------------------------------------------ */
+const PENDING_WISHLIST_KEY = "treva_pending_wishlist";
+const LOCAL_WISHLIST_KEY = "treva_local_wishlist_items";
+const ACTIVE_WISHLIST_TRIP_KEY = "treva_active_wishlist_trip";
+
 export default function AiTripPlanner() {
   const [prompt, setPrompt] = useState("");
   const [options, setOptions] = useState<TripSuggestion[] | null>(null);
@@ -61,16 +67,105 @@ export default function AiTripPlanner() {
   const [showBudgetModal, setShowBudgetModal] = useState(false);
   const [budgetInput, setBudgetInput] = useState("");
   const [pendingPrompt, setPendingPrompt] = useState<string | null>(null);
+  const [saving, setSaving] = useState(false);
+  const [saveMessage, setSaveMessage] = useState<string | null>(null);
   const resultRef = useRef<HTMLDivElement>(null);
+  const router = useRouter();
 
   const trip = options ? options[activeOptionIndex] : null;
 
   const promptHasBudget = (text: string) => {
     const lowered = text.toLowerCase();
     const currencyRegex = /₹|\$|eur|usd|inr|rs\.?/i;
-    const budgetWordsRegex = /(budget|under|less than|up to)\s+\d/;
+    const budgetWordsRegex = /(budget|under|less than|up to|maximum|max)\s+\d/;
     return currencyRegex.test(text) || budgetWordsRegex.test(lowered);
   };
+
+  /**
+   * Try to extract a requested trip length in days from free text,
+   * e.g. "6 days", "6-day", "6 night", "6 nights".
+   */
+  const extractDurationDays = (text: string): number | null => {
+    if (!text) return null;
+    const match = text.toLowerCase().match(/(\d+)\s*-(day|days|night|nights)|(\d+)\s*(day|days|night|nights)/);
+    if (!match) return null;
+    const num = parseInt(match[1] || match[3], 10);
+    if (!Number.isFinite(num)) return null;
+    return num;
+  };
+
+  /**
+   * Extract a rough numeric budget from a free-text phrase.
+   * e.g. "under 30000", "₹50,000", "budget 1,20,000" → 30000 / 50000 / 120000
+   */
+  const extractBudgetAmount = (text: string): number | null => {
+    if (!text) return null;
+    const match = text.replace(/,/g, "").match(/(\d{3,})/);
+    if (!match) return null;
+    const value = parseInt(match[1], 10);
+    return Number.isFinite(value) ? value : null;
+  };
+
+  /**
+   * Ensure the prompt contains a HARD upper‑bound instruction for the budget.
+   * If we can parse a number (e.g. 30000), we append a very explicit constraint
+   * so the AI keeps the total trip cost ≤ that number.
+   */
+  const enforceHardBudgetConstraint = (basePrompt: string, explicitBudget?: string) => {
+    const fromExplicit = explicitBudget ? extractBudgetAmount(explicitBudget) : null;
+    const fromPrompt = extractBudgetAmount(basePrompt);
+    const budgetMax = fromExplicit ?? fromPrompt;
+
+    if (!budgetMax) return basePrompt.trim();
+
+    const constraint = ` The TOTAL budget for the entire trip (all travelers combined) must be at most ₹${budgetMax}. Do not exceed this amount in any case; if necessary, shorten the trip or choose simpler stays so that the estimatedBudget is always ≤ ₹${budgetMax}.`;
+
+    return `${basePrompt.trim()}${constraint}`;
+  };
+
+  /**
+   * Ensure the prompt includes a clear instruction to keep the
+   * number of days / nights consistent with what the user asked for.
+   */
+  const enforceDurationConstraint = (basePrompt: string) => {
+    const days = extractDurationDays(basePrompt);
+    if (!days) return basePrompt.trim();
+
+    const durationText = ` The itinerary must cover approximately ${days} day(s) of travel (with a matching number of nights) as requested. Do not silently reduce the trip length to fewer days; if the budget is too low for ${days} days, explain that clearly but still structure a ${days}-day plan.`;
+
+    return `${basePrompt.trim()}${durationText}`;
+  };
+
+  // If user arrived from the dashboard by clicking "Revisit" on a saved itinerary,
+  // hydrate the planner with that exact trip so they can continue from where they left off.
+  useEffect(() => {
+    try {
+      const raw = window.localStorage.getItem(ACTIVE_WISHLIST_TRIP_KEY);
+      if (!raw) return;
+      const data = JSON.parse(raw) as {
+        prompt?: string;
+        trip?: TripSuggestion;
+      };
+      if (data.trip) {
+        setPrompt(data.prompt ?? "");
+        setOptions([data.trip]);
+        setActiveOptionIndex(0);
+        setActiveDay(0);
+        setActiveImageIndex(0);
+        // Clear the handoff so it doesn't reapply on refresh.
+        window.localStorage.removeItem(ACTIVE_WISHLIST_TRIP_KEY);
+        // Scroll down to the result after a short delay.
+        setTimeout(() => {
+          resultRef.current?.scrollIntoView({
+            behavior: "smooth",
+            block: "start",
+          });
+        }, 300);
+      }
+    } catch {
+      // ignore malformed data
+    }
+  }, []);
 
   const callGenerateApi = async (text: string) => {
     setLoading(true);
@@ -79,11 +174,15 @@ export default function AiTripPlanner() {
     setActiveOptionIndex(0);
 
     try {
+      const finalPrompt = enforceHardBudgetConstraint(
+        enforceDurationConstraint(text)
+      );
+
       const res = await fetch("/api/generate-trip", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          prompt: `${text.trim()} Assume this trip is planned for two travelers unless I explicitly mentioned a different group size.`,
+          prompt: `${finalPrompt.trim()} Assume this trip is planned for two travelers unless I explicitly mentioned a different group size.`,
         }),
       });
 
@@ -112,6 +211,28 @@ export default function AiTripPlanner() {
     }
   };
 
+  const saveTripLocally = () => {
+    if (!trip) return;
+    try {
+      const existingRaw = window.localStorage.getItem(LOCAL_WISHLIST_KEY);
+      const existing: any[] = existingRaw ? JSON.parse(existingRaw) : [];
+      const entry = {
+        id: `local-${Date.now()}`,
+        created_at: new Date().toISOString(),
+        title: trip.tripName,
+        destination: trip.destination,
+        estimated_budget: trip.estimatedBudget,
+        prompt,
+        trip_data: trip,
+        isLocal: true,
+      };
+      const next = [entry, ...existing];
+      window.localStorage.setItem(LOCAL_WISHLIST_KEY, JSON.stringify(next));
+    } catch {
+      // swallow localStorage errors
+    }
+  };
+
   const generate = async (customPrompt?: string) => {
     const text = customPrompt ?? prompt;
     if (!text.trim()) return;
@@ -128,10 +249,74 @@ export default function AiTripPlanner() {
 
   const handleConfirmBudget = async () => {
     if (!pendingPrompt || !budgetInput.trim()) return;
-    const combinedPrompt = `${pendingPrompt.trim()} My budget for this trip is ${budgetInput.trim()}.`;
+    const base = `${pendingPrompt.trim()} My budget for this trip is ${budgetInput.trim()}.`;
+    const combinedPrompt = enforceHardBudgetConstraint(
+      enforceDurationConstraint(base),
+      budgetInput
+    );
     setShowBudgetModal(false);
     setPendingPrompt(null);
     await callGenerateApi(combinedPrompt);
+  };
+
+  const handleSaveToWishlist = async () => {
+    if (!options || !trip) return;
+    setSaveMessage(null);
+    setSaving(true);
+
+    try {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+
+      if (!user) {
+        try {
+          const payload = {
+            prompt,
+            activeOptionIndex,
+            trip,
+            createdAt: new Date().toISOString(),
+          };
+          window.localStorage.setItem(
+            PENDING_WISHLIST_KEY,
+            JSON.stringify(payload)
+          );
+        } catch {
+          // ignore storage failures
+        }
+        window.location.href = "/auth?redirect=/dashboard";
+        return;
+      }
+
+      const { error } = await supabase.from("wishlist_trips").insert({
+        user_id: user.id,
+        title: trip.tripName,
+        destination: trip.destination,
+        estimated_budget: trip.estimatedBudget,
+        prompt,
+        trip_data: trip,
+      });
+
+      if (error) {
+        console.error(error);
+        saveTripLocally();
+        setSaveMessage(
+          "Could not save to the cloud. Saved locally in this browser instead."
+        );
+      } else {
+        setSaveMessage("Saved to your wishlist.");
+        router.refresh();
+      }
+    } catch (err) {
+      console.error(err);
+      saveTripLocally();
+      setSaveMessage(
+        "Something went wrong while saving online. Saved locally in this browser instead."
+      );
+    } finally {
+      setSaving(false);
+      setTimeout(() => setSaveMessage(null), 4000);
+    }
   };
 
   // Slideshow effect for active trip images
@@ -325,17 +510,26 @@ export default function AiTripPlanner() {
                 {/* Image Slideshow Background */}
                 <div className="absolute inset-0 z-0 bg-neutral-900">
                   <AnimatePresence mode="popLayout">
-                    {trip.images && trip.images.length > 0 && (
+                    {trip.images && trip.images.length > 0 ? (
                       <motion.img
-                        key={trip.images[activeImageIndex]}
-                        src={trip.images[activeImageIndex]}
+                        key={trip.images[activeImageIndex] || trip.images[0]}
+                        src={trip.images[activeImageIndex] || trip.images[0]}
                         alt={`${trip.tripName} highlights`}
                         initial={{ opacity: 0, scale: 1.05 }}
                         animate={{ opacity: 0.8, scale: 1 }}
                         exit={{ opacity: 0 }}
                         transition={{ duration: 1.2, ease: "easeInOut" }}
                         className="absolute inset-0 h-full w-full object-cover"
+                        onError={(e) => {
+                          // Fallback if image fails to load
+                          const target = e.target as HTMLImageElement;
+                          target.src = `https://images.unsplash.com/photo-1488646953014-85cb44e25828?auto=format&fit=crop&q=80&w=1600`;
+                        }}
                       />
+                    ) : (
+                      <div className="absolute inset-0 bg-gradient-to-br from-neutral-800 via-neutral-700 to-neutral-900 flex items-center justify-center">
+                        <p className="text-white/40 text-sm uppercase tracking-wider">Loading images...</p>
+                      </div>
                     )}
                   </AnimatePresence>
                   {/* Subtle vignette/gradient over images */}
@@ -511,17 +705,32 @@ export default function AiTripPlanner() {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.8 }}
-                className="mt-12 text-center"
+                className="mt-12 flex flex-col items-center gap-3 text-center"
               >
-                <p className="mb-4 text-[0.65rem] uppercase tracking-[0.3em] text-neutral-500">
+                <p className="text-[0.65rem] uppercase tracking-[0.3em] text-neutral-500">
                   Love this itinerary?
                 </p>
-                <a
-                  href="#contact"
-                  className="inline-flex items-center gap-2 rounded-full border border-[#1fb4b4] bg-[#1fb4b4]/10 px-8 py-3 text-[0.7rem] uppercase tracking-[0.25em] text-[#1fb4b4] transition-all hover:bg-[#1fb4b4] hover:text-white"
-                >
-                  Book this trip with Treva →
-                </a>
+                <div className="flex flex-wrap items-center justify-center gap-3">
+                  <button
+                    type="button"
+                    onClick={handleSaveToWishlist}
+                    disabled={saving}
+                    className="inline-flex items-center gap-2 rounded-full bg-[#1fb4b4] px-8 py-3 text-[0.7rem] uppercase tracking-[0.25em] text-white transition-colors hover:bg-[#1fb4b4]/90 disabled:cursor-not-allowed disabled:opacity-60"
+                  >
+                    {saving ? "Saving…" : "Save to wishlist"}
+                  </button>
+                  <a
+                    href="#contact"
+                    className="inline-flex items-center gap-2 rounded-full border border-[#1fb4b4] bg-[#1fb4b4]/10 px-8 py-3 text-[0.7rem] uppercase tracking-[0.25em] text-[#1fb4b4] transition-all hover:bg-[#1fb4b4] hover:text-white"
+                  >
+                    Book this trip with Treva →
+                  </a>
+                </div>
+                {saveMessage && (
+                  <p className="text-[0.7rem] uppercase tracking-[0.2em] text-neutral-500">
+                    {saveMessage}
+                  </p>
+                )}
               </motion.div>
             </motion.div>
           )}

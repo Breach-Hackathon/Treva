@@ -46,9 +46,9 @@ export default function Footer() {
               Get in Touch
             </p>
             <ul className="space-y-2 text-[0.75rem] text-neutral-500">
-              <li>journeys@treva.co</li>
-              <li>+1 (212) 555-0199</li>
-              <li>148 Lafayette St, New York</li>
+              <li>journeys@treva.in</li>
+              <li>+91 79 3061 6000</li>
+              <li>Nirma University, Sarkhej-Gandhinagar Highway, Ahmedabad</li>
             </ul>
           </div>
 

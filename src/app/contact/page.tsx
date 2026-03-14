@@ -79,7 +79,7 @@ export default function ContactPage() {
             {[
               {
                 label: "Email",
-                value: "journeys@treva.co",
+                value: "journeys@treva.in",
                 icon: (
                   <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75" />
@@ -88,7 +88,7 @@ export default function ContactPage() {
               },
               {
                 label: "Telephone",
-                value: "+1 (212) 555-0199",
+                value: "+91 79 3061 6000",
                 icon: (
                   <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 0 0 2.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 0 1-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 0 0-1.091-.852H4.5A2.25 2.25 0 0 0 2.25 4.5v2.25Z" />
@@ -97,7 +97,7 @@ export default function ContactPage() {
               },
               {
                 label: "Office",
-                value: "148 Lafayette Street, New York, NY 10013",
+                value: "Nirma University, Sarkhej-Gandhinagar Highway, Ahmedabad, Gujarat 382481, India",
                 icon: (
                   <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
@@ -107,7 +107,7 @@ export default function ContactPage() {
               },
               {
                 label: "Hours",
-                value: "Monday – Friday, 9am – 6pm EST",
+                value: "Monday – Friday, 9am – 6pm IST",
                 icon: (
                   <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
@@ -187,7 +187,7 @@ export default function ContactPage() {
                 <input
                   name="phone"
                   className="w-full border-b border-neutral-200 bg-transparent pb-2 text-sm outline-none transition-colors focus:border-accent"
-                  placeholder="+1 (555) 000-0000"
+                  placeholder="+91 98765 43210"
                 />
               </div>
               <div className="space-y-1 text-xs">
