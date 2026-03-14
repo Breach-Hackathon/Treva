@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
 /* ------------------------------------------------------------------ */
@@ -16,6 +16,7 @@ interface ItineraryDay {
 }
 
 interface TripSuggestion {
+  mood: string;
   tripName: string;
   tagline: string;
   destination: string;
@@ -29,6 +30,7 @@ interface TripSuggestion {
   packingEssentials: string[];
   travelTips: string[];
   cuisineToTry: string[];
+  images: string[];
 }
 
 /* ------------------------------------------------------------------ */
@@ -50,11 +52,15 @@ const INSPIRATIONS = [
 /* ------------------------------------------------------------------ */
 export default function AiTripPlanner() {
   const [prompt, setPrompt] = useState("");
-  const [trip, setTrip] = useState<TripSuggestion | null>(null);
+  const [options, setOptions] = useState<TripSuggestion[] | null>(null);
+  const [activeOptionIndex, setActiveOptionIndex] = useState(0);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [activeDay, setActiveDay] = useState(0);
+  const [activeImageIndex, setActiveImageIndex] = useState(0);
   const resultRef = useRef<HTMLDivElement>(null);
+
+  const trip = options ? options[activeOptionIndex] : null;
 
   const generate = async (customPrompt?: string) => {
     const text = customPrompt ?? prompt;
@@ -62,7 +68,8 @@ export default function AiTripPlanner() {
 
     setLoading(true);
     setError("");
-    setTrip(null);
+    setOptions(null);
+    setActiveOptionIndex(0);
 
     try {
       const res = await fetch("/api/generate-trip", {
@@ -78,8 +85,9 @@ export default function AiTripPlanner() {
         return;
       }
 
-      setTrip(data.trip);
+      setOptions(data.options);
       setActiveDay(0);
+      setActiveImageIndex(0);
 
       // Scroll to results after a short delay
       setTimeout(() => {
@@ -94,6 +102,15 @@ export default function AiTripPlanner() {
       setLoading(false);
     }
   };
+
+  // Slideshow effect for active trip images
+  useEffect(() => {
+    if (!trip || !trip.images || trip.images.length === 0) return;
+    const interval = setInterval(() => {
+      setActiveImageIndex((prev) => (prev + 1) % trip.images.length);
+    }, 4000); // 4 seconds per image
+    return () => clearInterval(interval);
+  }, [trip]);
 
   return (
     <section
@@ -245,7 +262,7 @@ export default function AiTripPlanner() {
 
         {/* ── RESULT ── */}
         <AnimatePresence>
-          {trip && !loading && (
+          {trip && options && !loading && (
             <motion.div
               ref={resultRef}
               initial={{ opacity: 0, y: 40 }}
@@ -254,25 +271,60 @@ export default function AiTripPlanner() {
               transition={{ duration: 0.8, ease: "easeOut" }}
               className="mx-auto mt-16 max-w-5xl"
             >
-              {/* Hero card */}
-              <div className="relative overflow-hidden rounded-3xl border border-neutral-200 bg-white p-8 shadow-sm md:p-12">
-                <div className="pointer-events-none absolute -right-16 -top-16 h-48 w-48 rounded-full bg-[#1fb4b4]/10 blur-[80px]" />
-                <div className="pointer-events-none absolute -bottom-12 -left-12 h-36 w-36 rounded-full bg-[#D4AF37]/10 blur-[60px]" />
+              <div className="mb-10 flex flex-wrap justify-center gap-4">
+                {options.map((opt, idx) => (
+                  <button
+                    key={idx}
+                    onClick={() => {
+                      setActiveOptionIndex(idx);
+                      setActiveDay(0);
+                    }}
+                    className={`rounded-full border px-6 py-3 text-[0.7rem] uppercase tracking-[0.2em] transition-all shadow-sm ${activeOptionIndex === idx
+                      ? "border-[#1fb4b4] bg-[#1fb4b4]/10 text-[#1fb4b4]"
+                      : "border-neutral-200 bg-white text-neutral-500 hover:border-neutral-300 hover:text-neutral-700 hover:bg-neutral-50"
+                      }`}
+                  >
+                    Mood: {opt.mood}
+                  </button>
+                ))}
+              </div>
 
-                <div className="relative z-10 space-y-6">
-                  <div className="flex flex-wrap items-start justify-between gap-4">
+              {/* Hero card */}
+              <div className="relative overflow-hidden rounded-3xl border border-neutral-200 bg-black/40 p-8 shadow-sm md:p-12 min-h-[500px] flex items-end">
+                {/* Image Slideshow Background */}
+                <div className="absolute inset-0 z-0 bg-neutral-900">
+                  <AnimatePresence mode="popLayout">
+                    {trip.images && trip.images.length > 0 && (
+                      <motion.img
+                        key={trip.images[activeImageIndex]}
+                        src={trip.images[activeImageIndex]}
+                        alt={`${trip.tripName} highlights`}
+                        initial={{ opacity: 0, scale: 1.05 }}
+                        animate={{ opacity: 0.8, scale: 1 }}
+                        exit={{ opacity: 0 }}
+                        transition={{ duration: 1.2, ease: "easeInOut" }}
+                        className="absolute inset-0 h-full w-full object-cover"
+                      />
+                    )}
+                  </AnimatePresence>
+                  {/* Subtle vignette/gradient over images */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
+                </div>
+
+                <div className="relative z-10 w-full space-y-6 pt-32">
+                  <div className="flex flex-wrap items-end justify-between gap-4">
                     <div className="space-y-2">
-                      <p className="text-[0.65rem] uppercase tracking-[0.4em] text-[#1fb4b4]">
+                      <p className="text-[0.65rem] uppercase tracking-[0.4em] text-white/70">
                         AI-Crafted Itinerary
                       </p>
-                      <h3 className="font-serif text-2xl uppercase tracking-[0.2em] md:text-4xl">
+                      <h3 className="font-serif text-3xl uppercase tracking-[0.2em] text-white md:text-5xl drop-shadow-md">
                         {trip.tripName}
                       </h3>
-                      <p className="text-sm italic text-neutral-600">
+                      <p className="text-sm italic text-white/80 drop-shadow-sm max-w-xl">
                         &ldquo;{trip.tagline}&rdquo;
                       </p>
                     </div>
-                    <div className="flex flex-wrap gap-2">
+                    <div className="flex flex-wrap gap-2 self-end">
                       {[
                         trip.destination,
                         trip.duration,
@@ -280,7 +332,7 @@ export default function AiTripPlanner() {
                       ].map((tag) => (
                         <span
                           key={tag}
-                          className="rounded-full border border-neutral-200 bg-neutral-50 px-3 py-1 text-[0.6rem] uppercase tracking-[0.2em] text-neutral-600"
+                          className="rounded-full border border-white/20 bg-black/30 backdrop-blur-md px-4 py-1.5 text-[0.6rem] uppercase tracking-[0.2em] text-white"
                         >
                           {tag}
                         </span>
@@ -288,11 +340,11 @@ export default function AiTripPlanner() {
                     </div>
                   </div>
 
-                  <p className="max-w-2xl text-sm leading-relaxed text-neutral-700">
+                  <p className="max-w-3xl text-sm leading-relaxed text-white/90 drop-shadow-sm">
                     {trip.heroDescription}
                   </p>
 
-                  <div className="inline-block rounded-full border border-[#D4AF37]/30 bg-[#D4AF37]/10 px-4 py-1.5 text-[0.65rem] uppercase tracking-[0.2em] text-[#D4AF37]">
+                  <div className="inline-block rounded-full border border-[#d4af37]/40 bg-black/40 backdrop-blur-md px-5 py-2 text-[0.7rem] uppercase tracking-[0.2em] text-[#d4af37]">
                     Est. {trip.estimatedBudget}
                   </div>
                 </div>
@@ -310,11 +362,10 @@ export default function AiTripPlanner() {
                     <button
                       key={day.day}
                       onClick={() => setActiveDay(i)}
-                      className={`rounded-full border px-4 py-2 text-[0.65rem] uppercase tracking-[0.2em] transition-all ${
-                        activeDay === i
-                          ? "border-[#1fb4b4] bg-[#1fb4b4]/15 text-[#1fb4b4]"
-                          : "border-neutral-200 text-neutral-500 hover:border-neutral-300 hover:text-neutral-700"
-                      }`}
+                      className={`rounded-full border px-4 py-2 text-[0.65rem] uppercase tracking-[0.2em] transition-all ${activeDay === i
+                        ? "border-[#1fb4b4] bg-[#1fb4b4]/15 text-[#1fb4b4]"
+                        : "border-neutral-200 text-neutral-500 hover:border-neutral-300 hover:text-neutral-700"
+                        }`}
                     >
                       Day {day.day}
                     </button>
