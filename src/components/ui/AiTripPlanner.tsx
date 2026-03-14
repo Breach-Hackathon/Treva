@@ -58,14 +58,21 @@ export default function AiTripPlanner() {
   const [error, setError] = useState("");
   const [activeDay, setActiveDay] = useState(0);
   const [activeImageIndex, setActiveImageIndex] = useState(0);
+  const [showBudgetModal, setShowBudgetModal] = useState(false);
+  const [budgetInput, setBudgetInput] = useState("");
+  const [pendingPrompt, setPendingPrompt] = useState<string | null>(null);
   const resultRef = useRef<HTMLDivElement>(null);
 
   const trip = options ? options[activeOptionIndex] : null;
 
-  const generate = async (customPrompt?: string) => {
-    const text = customPrompt ?? prompt;
-    if (!text.trim()) return;
+  const promptHasBudget = (text: string) => {
+    const lowered = text.toLowerCase();
+    const currencyRegex = /₹|\$|eur|usd|inr|rs\.?/i;
+    const budgetWordsRegex = /(budget|under|less than|up to)\s+\d/;
+    return currencyRegex.test(text) || budgetWordsRegex.test(lowered);
+  };
 
+  const callGenerateApi = async (text: string) => {
     setLoading(true);
     setError("");
     setOptions(null);
@@ -75,7 +82,9 @@ export default function AiTripPlanner() {
       const res = await fetch("/api/generate-trip", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ prompt: text }),
+        body: JSON.stringify({
+          prompt: `${text.trim()} Assume this trip is planned for two travelers unless I explicitly mentioned a different group size.`,
+        }),
       });
 
       const data = await res.json();
@@ -101,6 +110,28 @@ export default function AiTripPlanner() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const generate = async (customPrompt?: string) => {
+    const text = customPrompt ?? prompt;
+    if (!text.trim()) return;
+
+    if (!promptHasBudget(text)) {
+      setPendingPrompt(text);
+      setBudgetInput("");
+      setShowBudgetModal(true);
+      return;
+    }
+
+    await callGenerateApi(text);
+  };
+
+  const handleConfirmBudget = async () => {
+    if (!pendingPrompt || !budgetInput.trim()) return;
+    const combinedPrompt = `${pendingPrompt.trim()} My budget for this trip is ${budgetInput.trim()}.`;
+    setShowBudgetModal(false);
+    setPendingPrompt(null);
+    await callGenerateApi(combinedPrompt);
   };
 
   // Slideshow effect for active trip images
@@ -491,6 +522,58 @@ export default function AiTripPlanner() {
                 >
                   Book this trip with Treva →
                 </a>
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+        {/* ── BUDGET MODAL ── */}
+        <AnimatePresence>
+          {showBudgetModal && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4"
+            >
+              <motion.div
+                initial={{ scale: 0.95, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: 0.95, opacity: 0 }}
+                className="w-full max-w-md rounded-2xl border border-neutral-200 bg-white p-6 shadow-xl"
+              >
+                <h3 className="mb-2 font-serif text-lg uppercase tracking-[0.2em] text-neutral-900">
+                  Add your budget
+                </h3>
+                <p className="mb-4 text-sm text-neutral-600">
+                  To craft a precise itinerary, please share your approximate budget for this trip (per person or total).
+                </p>
+                <input
+                  value={budgetInput}
+                  onChange={(e) => setBudgetInput(e.target.value)}
+                  placeholder="e.g. ₹2,00,000 per person"
+                  className="mb-4 w-full rounded-xl border border-neutral-200 bg-neutral-50 px-3 py-2 text-sm text-neutral-900 outline-none focus:border-[#1fb4b4]"
+                  autoFocus
+                />
+                <div className="flex justify-end gap-3 text-[0.7rem] uppercase tracking-[0.2em]">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setShowBudgetModal(false);
+                      setPendingPrompt(null);
+                    }}
+                    className="rounded-full border border-neutral-200 px-4 py-2 text-neutral-500 hover:bg-neutral-50"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="button"
+                    disabled={!budgetInput.trim() || loading}
+                    onClick={handleConfirmBudget}
+                    className="rounded-full bg-[#1fb4b4] px-5 py-2 text-white hover:bg-[#1fb4b4]/90 disabled:cursor-not-allowed disabled:opacity-40"
+                  >
+                    Continue
+                  </button>
+                </div>
               </motion.div>
             </motion.div>
           )}

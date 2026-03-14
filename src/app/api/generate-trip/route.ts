@@ -188,6 +188,41 @@ function extractCities(text: string): string[] {
   return indianCities.filter((c) => lower.includes(c.toLowerCase()));
 }
 
+function getDestinationImages(destination: string): string[] {
+  const lower = destination.toLowerCase();
+
+  if (lower.includes("delhi")) {
+    return [
+      "https://images.unsplash.com/photo-1587474260584-136574528ed5?auto=format&fit=crop&q=80&w=1600", // India Gate
+      "https://images.unsplash.com/photo-1598519870305-0bea1891fc87?auto=format&fit=crop&q=80&w=1600", // Qutub Minar
+      "https://images.unsplash.com/photo-1589739900243-4c4c4620cf5e?auto=format&fit=crop&q=80&w=1600", // Old Delhi street
+    ];
+  }
+
+  if (lower.includes("mumbai")) {
+    return [
+      "https://images.unsplash.com/photo-1587470213746-604081de63d3?auto=format&fit=crop&q=80&w=1600", // Gateway of India
+      "https://images.unsplash.com/photo-1589308078059-be1415eab4c3?auto=format&fit=crop&q=80&w=1600", // Marine Drive
+      "https://images.unsplash.com/photo-1559717865-a99cac1c95c1?auto=format&fit=crop&q=80&w=1600", // Mumbai skyline
+    ];
+  }
+
+  if (lower.includes("uttarakhand") || lower.includes("nainital") || lower.includes("rishikesh") || lower.includes("mussoorie")) {
+    return [
+      "https://images.unsplash.com/photo-1593691509543-cc9b245fc6aa?auto=format&fit=crop&q=80&w=1600", // Himalayan valley
+      "https://images.unsplash.com/photo-1548767797-d8c844163c4c?auto=format&fit=crop&q=80&w=1600", // Rishikesh Ganga
+      "https://images.unsplash.com/photo-1600490036275-35f5f1656861?auto=format&fit=crop&q=80&w=1600", // Mountain road
+    ];
+  }
+
+  // Default Unsplash-based placeholders for other destinations
+  return [
+    `https://images.unsplash.com/photo-1540541338287-41700207dee6?auto=format&fit=crop&q=80&w=1600&query=${encodeURIComponent(destination + " luxury")}`,
+    `https://images.unsplash.com/photo-1582719508461-905c673771fd?auto=format&fit=crop&q=80&w=1600&query=${encodeURIComponent(destination + " resort")}`,
+    `https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?auto=format&fit=crop&q=80&w=1600&query=${encodeURIComponent(destination + " landscape")}`,
+  ];
+}
+
 export async function POST(request: NextRequest) {
   try {
     const { prompt } = await request.json();
@@ -212,6 +247,10 @@ export async function POST(request: NextRequest) {
 
     const systemPrompt = `You are Treva's AI Travel Architect — a world-class luxury travel concierge.
 Weather Context: ${weatherContext || "Provide a luxury itinerary based on seasonal norms."}
+
+Always carefully read and respect any budget constraints mentioned in the travel wish. Keep hotel, flight and experience selections consistent with that budget, and express "estimatedBudget" as a realistic INR range.
+If the user does not clearly mention a budget, choose options that fit premium-to-luxury Indian travelers, but do not invent a constraint that contradicts what they wrote.
+Assume itineraries are for two travelers unless the user has clearly specified a different party size.
 
 Structure your response as hyper-detailed JSON containing EXACTLY 2 distinct luxury itineraries for the given prompt. Each itinerary should have a distinct "mood" or vibe (e.g., "Serene & Relaxing" vs "Adventurous & High-Energy", or "Cultural" vs "Epicurean").
 
@@ -260,14 +299,10 @@ Structure your response as hyper-detailed JSON containing EXACTLY 2 distinct lux
 
       const tripData = JSON.parse(content);
 
-      // AI cannot browse the web so its images are hallucinations (e.g. example.com). We will forcibly inject high quality Unsplash placeholders instead.
+      // AI cannot browse the web so its images are hallucinations. Inject curated/placeholder images instead.
       const enrichedOptions = tripData.options.map((opt: any) => ({
         ...opt,
-        images: [
-          `https://images.unsplash.com/photo-1540541338287-41700207dee6?auto=format&fit=crop&q=80&w=1600&query=${encodeURIComponent(opt.destination + ' luxury')}`,
-          `https://images.unsplash.com/photo-1582719508461-905c673771fd?auto=format&fit=crop&q=80&w=1600&query=${encodeURIComponent(opt.destination + ' resort')}`,
-          `https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?auto=format&fit=crop&q=80&w=1600&query=${encodeURIComponent(opt.destination + ' landscape')}`
-        ]
+        images: getDestinationImages(opt.destination),
       }));
 
       return NextResponse.json({ options: enrichedOptions });
