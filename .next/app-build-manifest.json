@@ -11,15 +11,15 @@
       "static/chunks/main-app.js",
       "static/chunks/app/page.js"
     ],
-    "/reels/page": [
+    "/ai-planner/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/chunks/app/reels/page.js"
+      "static/chunks/app/ai-planner/page.js"
     ],
-    "/api/generate-reel-data/route": [
+    "/api/generate-trip/route": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/chunks/app/api/generate-reel-data/route.js"
+      "static/chunks/app/api/generate-trip/route.js"
     ]
   }
 }

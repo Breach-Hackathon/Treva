@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import ReelGenerator from "./ReelGenerator";
+import { supabase } from "@/lib/supabase";
 
 /* ------------------------------------------------------------------ */
 /*  Types                                                              */
@@ -62,6 +63,8 @@ export default function AiTripPlanner() {
   const [isBudgetModalOpen, setIsBudgetModalOpen] = useState(false);
   const [budgetInput, setBudgetInput] = useState("");
   const [showReelGenerator, setShowReelGenerator] = useState(false);
+  const [isSavingWishlist, setIsSavingWishlist] = useState(false);
+  const [hasSavedWishlist, setHasSavedWishlist] = useState(false);
   const resultRef = useRef<HTMLDivElement>(null);
 
   const trip = options ? options[activeOptionIndex] : null;
@@ -104,6 +107,7 @@ export default function AiTripPlanner() {
       setActiveDay(0);
       setActiveImageIndex(0);
       setShowReelGenerator(false);
+      setHasSavedWishlist(false);
 
       // Scroll to results after a short delay
       setTimeout(() => {
@@ -127,6 +131,65 @@ export default function AiTripPlanner() {
     }, 4000); // 4 seconds per image
     return () => clearInterval(interval);
   }, [trip]);
+
+  const handleSaveToWishlist = async () => {
+    if (!trip) return;
+    setIsSavingWishlist(true);
+
+    try {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+
+      if (user) {
+        // Logged in: Save to Supabase
+        await supabase.from("wishlist_trips").insert({
+          user_id: user.id,
+          title: trip.tripName,
+          destination: trip.destination,
+          estimated_budget: trip.estimatedBudget,
+          prompt,
+          trip_data: trip,
+        });
+      } else {
+        // Not logged in: Save to localStorage (same key as dashboard pending logic)
+        const PENDING_WISHLIST_KEY = "treva_pending_wishlist";
+        window.localStorage.setItem(
+          PENDING_WISHLIST_KEY,
+          JSON.stringify({ prompt, activeOptionIndex: 0, trip })
+        );
+        
+        // Also add logic to save it to local wishlist permanently so it shows on dash immediately
+        const LOCAL_WISHLIST_KEY = "treva_local_wishlist_items";
+        const localRaw = window.localStorage.getItem(LOCAL_WISHLIST_KEY);
+        let localTrips = [];
+        if (localRaw) {
+          try {
+            localTrips = JSON.parse(localRaw);
+          } catch {}
+        }
+        
+        localTrips.push({
+          id: `local_wishlist_${Date.now()}`,
+          created_at: new Date().toISOString(),
+          title: trip.tripName,
+          destination: trip.destination,
+          estimated_budget: trip.estimatedBudget,
+          prompt,
+          trip_data: trip,
+          isLocal: true
+        });
+        
+        window.localStorage.setItem(LOCAL_WISHLIST_KEY, JSON.stringify(localTrips));
+      }
+
+      setHasSavedWishlist(true);
+    } catch (err) {
+      console.error("Failed to save to wishlist:", err);
+    } finally {
+      setIsSavingWishlist(false);
+    }
+  };
 
   return (
     <section
@@ -576,7 +639,37 @@ export default function AiTripPlanner() {
                     <p className="mb-4 text-[0.65rem] uppercase tracking-[0.3em] text-neutral-500">
                       Love this itinerary?
                     </p>
-                    <div className="flex justify-center gap-4">
+                    <div className="flex flex-wrap justify-center gap-4">
+                      <button
+                        onClick={handleSaveToWishlist}
+                        disabled={isSavingWishlist || hasSavedWishlist}
+                        className={`inline-flex items-center justify-center gap-2 rounded-full border px-8 py-3 text-[0.7rem] uppercase tracking-[0.25em] transition-all
+                          ${
+                            hasSavedWishlist
+                              ? "border-green-500 bg-green-500/10 text-green-600"
+                              : "border-neutral-300 bg-white text-neutral-700 hover:border-[#1fb4b4] hover:text-[#1fb4b4]"
+                          }
+                        `}
+                      >
+                        {isSavingWishlist ? (
+                          "Saving..."
+                        ) : hasSavedWishlist ? (
+                          <>
+                            <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                            </svg>
+                            Saved to Wishlist
+                          </>
+                        ) : (
+                          <>
+                            <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
+                            </svg>
+                            Save to Wishlist
+                          </>
+                        )}
+                      </button>
+
                       <a
                         href="#contact"
                         className="inline-flex items-center justify-center gap-2 rounded-full border border-[#1fb4b4] bg-[#1fb4b4]/10 px-8 py-3 text-[0.7rem] uppercase tracking-[0.25em] text-[#1fb4b4] transition-all hover:bg-[#1fb4b4] hover:text-white"
