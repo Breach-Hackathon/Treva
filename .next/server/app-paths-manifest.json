@@ -1,8 +1,6 @@
 {
-  "/api/generate-trip/route": "app/api/generate-trip/route.js",
-  "/journal/page": "app/journal/page.js",
-  "/gallery/page": "app/gallery/page.js",
-  "/contact/page": "app/contact/page.js",
-  "/ai-planner/page": "app/ai-planner/page.js",
-  "/dashboard/page": "app/dashboard/page.js"
+  "/_not-found/page": "app/_not-found/page.js",
+  "/api/generate-reel-data/route": "app/api/generate-reel-data/route.js",
+  "/page": "app/page.js",
+  "/reels/page": "app/reels/page.js"
 }

@@ -119,6 +119,15 @@ type RouteHandlerConfig<Route extends AppRouteHandlerRoutes = AppRouteHandlerRou
   type __Unused = __Check
 }
 
+// Validate ../../src/app/reels/page.tsx
+{
+  type __IsExpected<Specific extends AppPageConfig<"/reels">> = Specific
+  const handler = {} as typeof import("../../src/app/reels/page.js")
+  type __Check = __IsExpected<typeof handler>
+  // @ts-ignore
+  type __Unused = __Check
+}
+
 // Validate ../../src/app/travel/[id]/page.tsx
 {
   type __IsExpected<Specific extends AppPageConfig<"/travel/[id]">> = Specific
@@ -132,6 +141,15 @@ type RouteHandlerConfig<Route extends AppRouteHandlerRoutes = AppRouteHandlerRou
 {
   type __IsExpected<Specific extends AppPageConfig<"/travel">> = Specific
   const handler = {} as typeof import("../../src/app/travel/page.js")
+  type __Check = __IsExpected<typeof handler>
+  // @ts-ignore
+  type __Unused = __Check
+}
+
+// Validate ../../src/app/api/generate-reel-data/route.ts
+{
+  type __IsExpected<Specific extends RouteHandlerConfig<"/api/generate-reel-data">> = Specific
+  const handler = {} as typeof import("../../src/app/api/generate-reel-data/route.js")
   type __Check = __IsExpected<typeof handler>
   // @ts-ignore
   type __Unused = __Check

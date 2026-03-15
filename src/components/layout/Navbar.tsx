@@ -10,6 +10,7 @@ const baseLinks = [
   { href: "/journal", label: "Journal" },
   { href: "/gallery", label: "Gallery" },
   { href: "/ai-planner", label: "AI Planner" },
+  { href: "/reels", label: "Reel Studio" },
   { href: "/contact", label: "Contact" },
 ];
 
